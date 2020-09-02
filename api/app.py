@@ -1,10 +1,18 @@
 from flask import Flask, request, jsonify
+from flask.json import JSONEncoder
+
+class CustomJsonEncoder(JSONEncoder):
+	def default(self, obj):
+		if isinstance(obj, set):
+			return list(obj)
+
+		return JSONEncoder.default(self, obj)
 
 app = Flask(__name__)
+app.json_encoder = CustomJsonEncoder
 app.id_count = 1
 app.users = {}
 app.tweets = []
-
 
 @app.route("/ping", methods=['GET'])
 def ping():
